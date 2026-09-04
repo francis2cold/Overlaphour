@@ -14,44 +14,56 @@
   <meta name="twitter:card" content="summary_large_image" />
 
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+    }
+  </script>
   <style>
     .custom-scrollbar::-webkit-scrollbar {
       height: 6px;
     }
     .custom-scrollbar::-webkit-scrollbar-track {
-      background: #f1f5f9;
-      border-radius: 4px;
+      background: transparent;
     }
     .custom-scrollbar::-webkit-scrollbar-thumb {
-      background: #cbd5e1;
+      background: #94a3b8;
       border-radius: 4px;
+    }
+    .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #475569;
     }
   </style>
 </head>
-<body class="bg-slate-50 text-slate-900 font-sans min-h-screen flex flex-col justify-between">
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans min-h-screen flex flex-col justify-between transition-colors duration-200">
 
   <!-- Header -->
-  <header class="border-b border-slate-200 bg-white">
+  <header class="border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 transition-colors duration-200">
     <div class="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
       <div class="flex items-center space-x-2">
         <span class="text-2xl">🌐</span>
-        <span class="font-bold text-xl tracking-tight text-slate-800">Overlap<span class="text-indigo-600">Hour</span></span>
+        <span class="font-bold text-xl tracking-tight text-slate-800 dark:text-white">Overlap<span class="text-indigo-600 dark:text-indigo-400">Hour</span></span>
       </div>
-      <span class="text-xs font-semibold px-2.5 py-1 bg-indigo-50 text-indigo-700 rounded-full border border-indigo-100">Free Remote Utility</span>
+      <div class="flex items-center space-x-3">
+        <button id="themeToggle" aria-label="Toggle Night Mode" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors text-sm">
+          🌙
+        </button>
+        <span class="text-xs font-semibold px-2.5 py-1 bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 rounded-full border border-indigo-100 dark:border-indigo-900">Free Remote Utility</span>
+      </div>
     </div>
   </header>
 
   <!-- Main Tool Container -->
   <main class="max-w-5xl mx-auto px-4 py-8 w-full flex-grow">
     
-    <!-- Explicit Permission / Opt-in Banner (Only appears if unprompted) -->
-    <div id="permissionBanner" class="hidden mb-6 p-4 rounded-xl border border-indigo-200 bg-indigo-50/70 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+    <!-- Opt-in Banner -->
+    <div id="permissionBanner" class="hidden mb-6 p-4 rounded-xl border border-indigo-200 dark:border-indigo-900 bg-indigo-50/70 dark:bg-indigo-950/40 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
       <div>
-        <h3 class="text-sm font-bold text-indigo-950">Set Your Local Timezone?</h3>
-        <p class="text-xs text-indigo-800 mt-0.5">Allow OverlapHour to check your browser's current timezone to auto-populate your first row.</p>
+        <h3 class="text-sm font-bold text-indigo-950 dark:text-indigo-200">Set Your Local Timezone?</h3>
+        <p class="text-xs text-indigo-800 dark:text-indigo-300 mt-0.5">Allow OverlapHour to check your browser's current timezone to auto-populate your first row.</p>
       </div>
       <div class="flex items-center space-x-2">
-        <button id="declineBtn" class="text-xs font-semibold px-3 py-2 bg-white text-slate-700 hover:bg-slate-100 border border-slate-200 rounded-lg transition-colors">
+        <button id="declineBtn" class="text-xs font-semibold px-3 py-2 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-lg transition-colors">
           Select Manually
         </button>
         <button id="allowBtn" class="text-xs font-semibold px-3.5 py-2 bg-indigo-600 text-white hover:bg-indigo-700 rounded-lg transition-colors shadow-xs">
@@ -61,19 +73,19 @@
     </div>
 
     <div class="text-center mb-8">
-      <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">Timezone Overlap Finder</h1>
-      <p class="mt-2 text-slate-600 max-w-xl mx-auto text-sm sm:text-base">
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">Timezone Overlap Finder</h1>
+      <p class="mt-2 text-slate-600 dark:text-slate-400 max-w-xl mx-auto text-sm sm:text-base">
         Find the sweet spot for meetings across global teams. Compare working hours across cities with instant visual grids.
       </p>
     </div>
 
     <!-- Interactive Card -->
-    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sm:p-6 mb-8">
+    <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 p-5 sm:p-6 mb-8 transition-colors duration-200">
       <!-- Controls -->
-      <div class="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-slate-100">
+      <div class="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-slate-100 dark:border-slate-800">
         <div class="flex items-center space-x-2">
-          <label for="citySelect" class="text-sm font-medium text-slate-700">Add City / Zone:</label>
-          <select id="citySelect" class="bg-slate-50 border border-slate-300 text-slate-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 p-2">
+          <label for="citySelect" class="text-sm font-medium text-slate-700 dark:text-slate-300">Add City / Zone:</label>
+          <select id="citySelect" class="bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 p-2">
             <option value="America/New_York|New York (EST/EDT)">New York</option>
             <option value="Europe/London|London (GMT/BST)">London</option>
             <option value="Australia/Sydney|Sydney (AEST/AEDT)">Sydney</option>
@@ -90,7 +102,7 @@
           </button>
         </div>
 
-        <div class="flex items-center space-x-4 text-xs font-medium text-slate-600">
+        <div class="flex items-center space-x-4 text-xs font-medium text-slate-600 dark:text-slate-400">
           <div class="flex items-center space-x-1.5">
             <span class="w-3 h-3 rounded bg-emerald-500"></span>
             <span>Work (9am - 5pm)</span>
@@ -100,33 +112,31 @@
             <span>Flexible / Twilight</span>
           </div>
           <div class="flex items-center space-x-1.5">
-            <span class="w-3 h-3 rounded bg-slate-200"></span>
+            <span class="w-3 h-3 rounded bg-slate-200 dark:bg-slate-700"></span>
             <span>Off Hours</span>
           </div>
         </div>
       </div>
 
       <!-- Overlap Visualizer Grid -->
-      <div id="cityGridContainer" class="mt-6 space-y-5">
-        <!-- Dynamic city rows inserted here -->
-      </div>
+      <div id="cityGridContainer" class="mt-6 space-y-5"></div>
 
       <!-- Overlap Summary Box -->
-      <div id="overlapSummary" class="mt-8 p-4 bg-indigo-50 border border-indigo-100 rounded-xl text-indigo-950 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div id="overlapSummary" class="mt-8 p-4 bg-indigo-50 dark:bg-indigo-950/50 border border-indigo-100 dark:border-indigo-900 rounded-xl text-indigo-950 dark:text-indigo-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <span class="font-bold text-sm block">Recommended Golden Meeting Window:</span>
-          <span id="overlapText" class="text-sm text-indigo-800">Add at least two timezones to calculate overlap.</span>
+          <span id="overlapText" class="text-sm text-indigo-800 dark:text-indigo-300">Add at least two timezones to calculate overlap.</span>
         </div>
-        <button id="copySummaryBtn" class="self-start sm:self-center text-xs font-semibold bg-white border border-indigo-200 hover:bg-indigo-100/50 text-indigo-700 px-3 py-2 rounded-lg transition-colors">
+        <button id="copySummaryBtn" class="self-start sm:self-center text-xs font-semibold bg-white dark:bg-slate-800 border border-indigo-200 dark:border-indigo-800 hover:bg-indigo-100/50 dark:hover:bg-slate-700 text-indigo-700 dark:text-indigo-300 px-3 py-2 rounded-lg transition-colors">
           📋 Copy Details
         </button>
       </div>
     </div>
 
-    <!-- SEO Section -->
-    <section class="max-w-3xl mx-auto space-y-6 text-slate-700 text-sm leading-relaxed mt-12">
-      <div class="border-t border-slate-200 pt-8">
-        <h2 class="text-xl font-bold text-slate-900 mb-3">How to Use the Timezone Overlap Calculator</h2>
+    <!-- Explainer & SEO Content -->
+    <section class="max-w-3xl mx-auto space-y-6 text-slate-700 dark:text-slate-400 text-sm leading-relaxed mt-12">
+      <div class="border-t border-slate-200 dark:border-slate-800 pt-8">
+        <h2 class="text-xl font-bold text-slate-900 dark:text-white mb-3">How to Use the Timezone Overlap Calculator</h2>
         <p>
           Managing international remote teams across different time zones often turns into a messy guessing game. 
           This tool aligns the active 24-hour day across multiple locations in real time so you can instantly identify common business hours without doing manual time conversions.
@@ -134,32 +144,51 @@
       </div>
 
       <div class="space-y-4">
-        <h3 class="text-lg font-semibold text-slate-900">Understanding the Color Zones</h3>
+        <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Understanding the Color Zones</h3>
         <ul class="list-disc pl-5 space-y-2">
-          <li><strong class="text-emerald-700">Green (Core Work Hours):</strong> Standard 9:00 AM to 5:00 PM business hours. Ideal for synchronous Zoom calls, scrums, and sprint check-ins.</li>
-          <li><strong class="text-amber-600">Yellow (Shoulder Hours):</strong> 7:00 AM to 9:00 AM and 5:00 PM to 8:00 PM. Good for non-intrusive async updates or urgent alignment calls.</li>
-          <li><strong class="text-slate-500">Gray (Rest Hours):</strong> 8:00 PM to 7:00 AM. Scheduled communications should be avoided during these periods to preserve team work-life balance.</li>
+          <li><strong class="text-emerald-700 dark:text-emerald-400">Green (Core Work Hours):</strong> Standard 9:00 AM to 5:00 PM business hours. Ideal for synchronous Zoom calls, scrums, and sprint check-ins.</li>
+          <li><strong class="text-amber-600 dark:text-amber-400">Yellow (Shoulder Hours):</strong> 7:00 AM to 9:00 AM and 5:00 PM to 8:00 PM. Good for non-intrusive async updates or urgent alignment calls.</li>
+          <li><strong class="text-slate-500 dark:text-slate-400">Gray (Rest Hours):</strong> 8:00 PM to 7:00 AM. Scheduled communications should be avoided during these periods to preserve team work-life balance.</li>
         </ul>
       </div>
 
-      <div class="space-y-4 pt-4 border-t border-slate-200">
-        <h3 class="text-lg font-semibold text-slate-900">Frequently Asked Questions</h3>
+      <div class="space-y-4 pt-4 border-t border-slate-200 dark:border-slate-800">
+        <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Frequently Asked Questions</h3>
         <div class="space-y-2">
-          <p class="font-medium text-slate-800">Does this tool account for Daylight Saving Time (DST)?</p>
-          <p class="text-slate-600">Yes. The tool runs directly on native internationalization APIs (<code class="bg-slate-100 px-1 py-0.5 rounded text-xs">Intl.DateTimeFormat</code>) that automatically recalculate for daylight saving transitions globally.</p>
+          <p class="font-medium text-slate-800 dark:text-slate-200">Does this tool account for Daylight Saving Time (DST)?</p>
+          <p class="text-slate-600 dark:text-slate-400">Yes. The tool runs directly on native internationalization APIs (<code class="bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded text-xs">Intl.DateTimeFormat</code>) that automatically recalculate for daylight saving transitions globally.</p>
         </div>
       </div>
     </section>
   </main>
 
   <!-- Footer -->
-  <footer class="border-t border-slate-200 bg-white py-6 mt-12 text-center text-xs text-slate-500">
+  <footer class="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 py-6 mt-12 text-center text-xs text-slate-500 dark:text-slate-400 transition-colors duration-200">
     <p>© <span id="year"></span> OverlapHour. Fast, privacy-friendly timezone tools for remote professionals.</p>
   </footer>
 
   <!-- JavaScript Logic -->
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Theme Management (Dark / Light Mode)
+    const themeToggleBtn = document.getElementById('themeToggle');
+    const storedTheme = localStorage.getItem('theme');
+    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+    if (storedTheme === 'dark' || (!storedTheme && systemPrefersDark)) {
+      document.documentElement.classList.add('dark');
+      themeToggleBtn.textContent = '☀️';
+    } else {
+      document.documentElement.classList.remove('dark');
+      themeToggleBtn.textContent = '🌙';
+    }
+
+    themeToggleBtn.addEventListener('click', () => {
+      const isDark = document.documentElement.classList.toggle('dark');
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+      themeToggleBtn.textContent = isDark ? '☀️' : '🌙';
+    });
 
     const permissionBanner = document.getElementById('permissionBanner');
     const allowBtn = document.getElementById('allowBtn');
@@ -184,7 +213,6 @@
         }
       }
 
-      // If user hasn't made a choice yet, show the permission banner
       if (!asked && activeCities.length === 0) {
         permissionBanner.classList.remove('hidden');
       }
@@ -196,7 +224,6 @@
       localStorage.setItem('overlap_cities', JSON.stringify(activeCities));
     }
 
-    // User explicitly allows timezone detection
     allowBtn.addEventListener('click', () => {
       localStorage.setItem('overlap_asked_permission', 'true');
       permissionBanner.classList.add('hidden');
@@ -209,7 +236,6 @@
       renderGrids();
     });
 
-    // User declines detection
     declineBtn.addEventListener('click', () => {
       localStorage.setItem('overlap_asked_permission', 'true');
       permissionBanner.classList.add('hidden');
@@ -217,9 +243,9 @@
     });
 
     function getHourStatus(hour) {
-      if (hour >= 9 && hour < 17) return 'bg-emerald-500 text-white font-semibold';
-      if ((hour >= 7 && hour < 9) || (hour >= 17 && hour < 20)) return 'bg-amber-300 text-amber-900 font-medium';
-      return 'bg-slate-100 text-slate-400';
+      if (hour >= 9 && hour < 17) return 'bg-emerald-500 dark:bg-emerald-600 text-white font-semibold';
+      if ((hour >= 7 && hour < 9) || (hour >= 17 && hour < 20)) return 'bg-amber-300 dark:bg-amber-400 text-amber-950 font-medium';
+      return 'bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500';
     }
 
     function renderGrids() {
@@ -228,10 +254,10 @@
 
       if (activeCities.length === 0) {
         const emptyState = document.createElement('div');
-        emptyState.className = 'border-2 border-dashed border-slate-200 rounded-xl p-8 text-center bg-white';
+        emptyState.className = 'border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-xl p-8 text-center bg-white dark:bg-slate-900';
         emptyState.innerHTML = `
-          <p class="text-sm font-semibold text-slate-700 mb-1">No timezones added yet</p>
-          <p class="text-xs text-slate-500">Select a city from the dropdown above and click <strong>"+ Add"</strong> to get started.</p>
+          <p class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">No timezones added yet</p>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Select a city from the dropdown above and click <strong>"+ Add"</strong> to get started.</p>
         `;
         cityGridContainer.appendChild(emptyState);
         overlapText.textContent = "Add at least two timezones above to calculate overlap.";
@@ -240,7 +266,7 @@
 
       activeCities.forEach((city, index) => {
         const row = document.createElement('div');
-        row.className = 'border border-slate-200 rounded-xl p-4 bg-slate-50/50';
+        row.className = 'border border-slate-200 dark:border-slate-800 rounded-xl p-4 bg-slate-50/50 dark:bg-slate-800/40';
 
         const localTimeStr = new Intl.DateTimeFormat('en-US', {
           timeZone: city.zone,
@@ -252,10 +278,10 @@
         row.innerHTML = `
           <div class="flex items-center justify-between mb-3">
             <div>
-              <span class="font-bold text-slate-800">${city.label}</span>
-              <span class="text-xs text-slate-500 ml-2">Now: <strong class="text-indigo-600">${localTimeStr}</strong></span>
+              <span class="font-bold text-slate-800 dark:text-slate-200">${city.label}</span>
+              <span class="text-xs text-slate-500 dark:text-slate-400 ml-2">Now: <strong class="text-indigo-600 dark:text-indigo-400">${localTimeStr}</strong></span>
             </div>
-            <button onclick="removeCity(${index})" class="text-xs text-slate-400 hover:text-rose-500 transition-colors">Remove</button>
+            <button onclick="removeCity(${index})" class="text-xs text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors">Remove</button>
           </div>
           <div class="overflow-x-auto custom-scrollbar pb-2">
             <div class="grid grid-flow-col auto-cols-[44px] gap-1 text-center select-none min-w-max">
@@ -268,10 +294,10 @@
 
       if (activeCities.length === 1) {
         const promptCard = document.createElement('div');
-        promptCard.className = 'border border-dashed border-slate-300 rounded-xl p-5 text-center bg-white';
+        promptCard.className = 'border border-dashed border-slate-300 dark:border-slate-700 rounded-xl p-5 text-center bg-white dark:bg-slate-900';
         promptCard.innerHTML = `
-          <p class="text-sm font-medium text-slate-700 mb-1">Find overlap with a teammate</p>
-          <p class="text-xs text-slate-500">Add a second city above to calculate your meeting sweet spot.</p>
+          <p class="text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Find overlap with a teammate</p>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Add a second city above to calculate your meeting sweet spot.</p>
         `;
         cityGridContainer.appendChild(promptCard);
       }
@@ -302,7 +328,7 @@
 
         blocks += `
           <div class="flex flex-col items-center">
-            <div class="w-full py-2 text-[11px] rounded-md ${statusClass} border border-black/5 shadow-xs">
+            <div class="w-full py-2 text-[11px] rounded-md ${statusClass} border border-black/5 dark:border-white/5 shadow-xs">
               ${hourStr}
             </div>
           </div>
