@@ -43,6 +43,23 @@
 
   <!-- Main Tool Container -->
   <main class="max-w-5xl mx-auto px-4 py-8 w-full flex-grow">
+    
+    <!-- Explicit Permission / Opt-in Banner (Only appears if unprompted) -->
+    <div id="permissionBanner" class="hidden mb-6 p-4 rounded-xl border border-indigo-200 bg-indigo-50/70 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div>
+        <h3 class="text-sm font-bold text-indigo-950">Set Your Local Timezone?</h3>
+        <p class="text-xs text-indigo-800 mt-0.5">Allow OverlapHour to check your browser's current timezone to auto-populate your first row.</p>
+      </div>
+      <div class="flex items-center space-x-2">
+        <button id="declineBtn" class="text-xs font-semibold px-3 py-2 bg-white text-slate-700 hover:bg-slate-100 border border-slate-200 rounded-lg transition-colors">
+          Select Manually
+        </button>
+        <button id="allowBtn" class="text-xs font-semibold px-3.5 py-2 bg-indigo-600 text-white hover:bg-indigo-700 rounded-lg transition-colors shadow-xs">
+          Allow & Detect
+        </button>
+      </div>
+    </div>
+
     <div class="text-center mb-8">
       <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">Timezone Overlap Finder</h1>
       <p class="mt-2 text-slate-600 max-w-xl mx-auto text-sm sm:text-base">
@@ -98,7 +115,7 @@
       <div id="overlapSummary" class="mt-8 p-4 bg-indigo-50 border border-indigo-100 rounded-xl text-indigo-950 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <span class="font-bold text-sm block">Recommended Golden Meeting Window:</span>
-          <span id="overlapText" class="text-sm text-indigo-800">Add a second timezone to calculate overlap.</span>
+          <span id="overlapText" class="text-sm text-indigo-800">Add at least two timezones to calculate overlap.</span>
         </div>
         <button id="copySummaryBtn" class="self-start sm:self-center text-xs font-semibold bg-white border border-indigo-200 hover:bg-indigo-100/50 text-indigo-700 px-3 py-2 rounded-lg transition-colors">
           📋 Copy Details
@@ -144,38 +161,60 @@
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
 
-    // Only load the user's single local timezone on initial load
-    function getInitialCities() {
-      const saved = localStorage.getItem('overlap_cities');
-      if (saved) {
-        try { 
-          const parsed = JSON.parse(saved);
-          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-        } catch (e) {}
-      }
-
-      // Detect visitor's local timezone automatically
-      const localZone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'America/New_York';
-      const cleanLabel = localZone.split('/').pop().replace(/_/g, ' ') + ' (Your Local Time)';
-
-      const initial = [
-        { id: 'local', zone: localZone, label: cleanLabel }
-      ];
-      localStorage.setItem('overlap_cities', JSON.stringify(initial));
-      return initial;
-    }
-
-    let activeCities = getInitialCities();
-
-    function saveCities() {
-      localStorage.setItem('overlap_cities', JSON.stringify(activeCities));
-    }
-
+    const permissionBanner = document.getElementById('permissionBanner');
+    const allowBtn = document.getElementById('allowBtn');
+    const declineBtn = document.getElementById('declineBtn');
     const cityGridContainer = document.getElementById('cityGridContainer');
     const citySelect = document.getElementById('citySelect');
     const addCityBtn = document.getElementById('addCityBtn');
     const overlapText = document.getElementById('overlapText');
     const copyBtn = document.getElementById('copySummaryBtn');
+
+    let activeCities = [];
+
+    function init() {
+      const saved = localStorage.getItem('overlap_cities');
+      const asked = localStorage.getItem('overlap_asked_permission');
+
+      if (saved) {
+        try {
+          activeCities = JSON.parse(saved);
+        } catch(e) {
+          activeCities = [];
+        }
+      }
+
+      // If user hasn't made a choice yet, show the permission banner
+      if (!asked && activeCities.length === 0) {
+        permissionBanner.classList.remove('hidden');
+      }
+
+      renderGrids();
+    }
+
+    function saveCities() {
+      localStorage.setItem('overlap_cities', JSON.stringify(activeCities));
+    }
+
+    // User explicitly allows timezone detection
+    allowBtn.addEventListener('click', () => {
+      localStorage.setItem('overlap_asked_permission', 'true');
+      permissionBanner.classList.add('hidden');
+
+      const localZone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'America/New_York';
+      const cleanLabel = localZone.split('/').pop().replace(/_/g, ' ') + ' (Your Time)';
+
+      activeCities = [{ id: 'local', zone: localZone, label: cleanLabel }];
+      saveCities();
+      renderGrids();
+    });
+
+    // User declines detection
+    declineBtn.addEventListener('click', () => {
+      localStorage.setItem('overlap_asked_permission', 'true');
+      permissionBanner.classList.add('hidden');
+      renderGrids();
+    });
 
     function getHourStatus(hour) {
       if (hour >= 9 && hour < 17) return 'bg-emerald-500 text-white font-semibold';
@@ -186,6 +225,18 @@
     function renderGrids() {
       cityGridContainer.innerHTML = '';
       const now = new Date();
+
+      if (activeCities.length === 0) {
+        const emptyState = document.createElement('div');
+        emptyState.className = 'border-2 border-dashed border-slate-200 rounded-xl p-8 text-center bg-white';
+        emptyState.innerHTML = `
+          <p class="text-sm font-semibold text-slate-700 mb-1">No timezones added yet</p>
+          <p class="text-xs text-slate-500">Select a city from the dropdown above and click <strong>"+ Add"</strong> to get started.</p>
+        `;
+        cityGridContainer.appendChild(emptyState);
+        overlapText.textContent = "Add at least two timezones above to calculate overlap.";
+        return;
+      }
 
       activeCities.forEach((city, index) => {
         const row = document.createElement('div');
@@ -198,17 +249,13 @@
           hour12: true
         }).format(now);
 
-        let removeBtnHtml = activeCities.length > 1 
-          ? `<button onclick="removeCity(${index})" class="text-xs text-slate-400 hover:text-rose-500 transition-colors">Remove</button>` 
-          : '';
-
         row.innerHTML = `
           <div class="flex items-center justify-between mb-3">
             <div>
               <span class="font-bold text-slate-800">${city.label}</span>
               <span class="text-xs text-slate-500 ml-2">Now: <strong class="text-indigo-600">${localTimeStr}</strong></span>
             </div>
-            ${removeBtnHtml}
+            <button onclick="removeCity(${index})" class="text-xs text-slate-400 hover:text-rose-500 transition-colors">Remove</button>
           </div>
           <div class="overflow-x-auto custom-scrollbar pb-2">
             <div class="grid grid-flow-col auto-cols-[44px] gap-1 text-center select-none min-w-max">
@@ -219,13 +266,12 @@
         cityGridContainer.appendChild(row);
       });
 
-      // If only 1 city is present, show a friendly banner to prompt adding a second timezone
       if (activeCities.length === 1) {
         const promptCard = document.createElement('div');
-        promptCard.className = 'border-2 border-dashed border-slate-200 rounded-xl p-6 text-center bg-white';
+        promptCard.className = 'border border-dashed border-slate-300 rounded-xl p-5 text-center bg-white';
         promptCard.innerHTML = `
-          <p class="text-sm font-medium text-slate-700 mb-2">Want to find overlapping hours with someone else?</p>
-          <p class="text-xs text-slate-500 mb-3">Select another city from the dropdown above to calculate the common meeting window.</p>
+          <p class="text-sm font-medium text-slate-700 mb-1">Find overlap with a teammate</p>
+          <p class="text-xs text-slate-500">Add a second city above to calculate your meeting sweet spot.</p>
         `;
         cityGridContainer.appendChild(promptCard);
       }
@@ -267,7 +313,7 @@
 
     function calculateOverlap() {
       if (activeCities.length < 2) {
-        overlapText.textContent = "Add at least one more city above to find overlapping working hours.";
+        overlapText.textContent = "Add at least two cities above to find overlapping working hours.";
         return;
       }
 
@@ -332,7 +378,7 @@
       });
     });
 
-    renderGrids();
+    init();
   </script>
 </body>
 </html>
