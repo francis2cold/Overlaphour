@@ -3,14 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <!-- Open Graph Meta Tags for Sharing -->
-<meta property="og:title" content="OverlapHour | Fast Timezone Overlap Finder" />
-<meta property="og:description" content="Find the best meeting windows across global remote teams in seconds." />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="https://www.overlaphour.com/" />
-<meta name="twitter:card" content="summary_large_image" />
   <title>Timezone Overlap Finder | Remote Team Working Hours Planner</title>
   <meta name="description" content="Easily find overlapping work hours across multiple timezones. Perfect for remote teams, freelancers, and distributed companies planning meetings." />
+  
+  <!-- Open Graph Meta Tags for Social & Chat Previews -->
+  <meta property="og:title" content="OverlapHour | Fast Timezone Overlap Finder" />
+  <meta property="og:description" content="Find the best meeting windows across global remote teams in seconds." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://www.overlaphour.com/" />
+  <meta name="twitter:card" content="summary_large_image" />
+
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     .custom-scrollbar::-webkit-scrollbar {
@@ -104,7 +106,7 @@
       </div>
     </div>
 
-    <!-- SEO Content & Explainer Section (Essential for Google Rankings) -->
+    <!-- SEO Content & Explainer Section -->
     <section class="max-w-3xl mx-auto space-y-6 text-slate-700 text-sm leading-relaxed mt-12">
       <div class="border-t border-slate-200 pt-8">
         <h2 class="text-xl font-bold text-slate-900 mb-3">How to Use the Timezone Overlap Calculator</h2>
@@ -138,12 +140,11 @@
     <p>© <span id="year"></span> OverlapHour. Fast, privacy-friendly timezone tools for remote professionals.</p>
   </footer>
 
-  <!-- JavaScript Logic -->
+  <!-- JavaScript Logic with LocalStorage Persistence -->
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
 
-    // Default cities
-    let // Load saved cities from localStorage, or fall back to Sydney + London
+    // Load saved cities from localStorage, or default to Sydney & London
     const savedCities = localStorage.getItem('overlap_cities');
     let activeCities = savedCities ? JSON.parse(savedCities) : [
       { id: 'syd', zone: 'Australia/Sydney', label: 'Sydney' },
@@ -160,11 +161,10 @@
     const overlapText = document.getElementById('overlapText');
     const copyBtn = document.getElementById('copySummaryBtn');
 
-    // Get color based on hour
     function getHourStatus(hour) {
-      if (hour >= 9 && hour < 17) return 'bg-emerald-500 text-white font-semibold'; // Core work
-      if ((hour >= 7 && hour < 9) || (hour >= 17 && hour < 20)) return 'bg-amber-300 text-amber-900 font-medium'; // Shoulder
-      return 'bg-slate-100 text-slate-400'; // Off hours
+      if (hour >= 9 && hour < 17) return 'bg-emerald-500 text-white font-semibold';
+      if ((hour >= 7 && hour < 9) || (hour >= 17 && hour < 20)) return 'bg-amber-300 text-amber-900 font-medium';
+      return 'bg-slate-100 text-slate-400';
     }
 
     function renderGrids() {
@@ -175,7 +175,6 @@
         const row = document.createElement('div');
         row.className = 'border border-slate-200 rounded-xl p-4 bg-slate-50/50';
 
-        // Local current time string
         const localTimeStr = new Intl.DateTimeFormat('en-US', {
           timeZone: city.zone,
           hour: 'numeric',
@@ -183,7 +182,6 @@
           hour12: true
         }).format(now);
 
-        // Header
         let removeBtnHtml = activeCities.length > 1 
           ? `<button onclick="removeCity(${index})" class="text-xs text-slate-400 hover:text-rose-500 transition-colors">Remove</button>` 
           : '';
@@ -210,7 +208,6 @@
 
     function generateHourBlocks(timeZone) {
       let blocks = '';
-      // We base hours around the current UTC date to show a normalized 24-hour sequence
       const baseDate = new Date();
       baseDate.setMinutes(0, 0, 0);
 
@@ -247,7 +244,6 @@
         return;
       }
 
-      // Check the next 24 hours for mutual core (9-17) or acceptable (8-18) overlap
       const baseDate = new Date();
       baseDate.setMinutes(0, 0, 0);
       let overlapCount = 0;
@@ -297,7 +293,7 @@
       const [zone, label] = citySelect.value.split('|');
       if (activeCities.some(c => c.zone === zone)) return;
       activeCities.push({ id: Date.now().toString(), zone, label });
-     saveCities();
+      saveCities();
       renderGrids();
     });
 
@@ -309,7 +305,6 @@
       });
     });
 
-    // Initial render
     renderGrids();
   </script>
 </body>
