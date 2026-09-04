@@ -6,7 +6,7 @@
   <title>Timezone Overlap Finder | Remote Team Working Hours Planner</title>
   <meta name="description" content="Easily find overlapping work hours across multiple timezones. Perfect for remote teams, freelancers, and distributed companies planning meetings." />
   
-  <!-- Open Graph Meta Tags for Social & Chat Previews -->
+  <!-- Open Graph Meta Tags -->
   <meta property="og:title" content="OverlapHour | Fast Timezone Overlap Finder" />
   <meta property="og:description" content="Find the best meeting windows across global remote teams in seconds." />
   <meta property="og:type" content="website" />
@@ -57,10 +57,10 @@
         <div class="flex items-center space-x-2">
           <label for="citySelect" class="text-sm font-medium text-slate-700">Add City / Zone:</label>
           <select id="citySelect" class="bg-slate-50 border border-slate-300 text-slate-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 p-2">
+            <option value="America/New_York|New York (EST/EDT)">New York</option>
+            <option value="Europe/London|London (GMT/BST)">London</option>
             <option value="Australia/Sydney|Sydney (AEST/AEDT)">Sydney</option>
             <option value="Asia/Manila|Manila (PHT)">Manila</option>
-            <option value="Europe/London|London (GMT/BST)">London</option>
-            <option value="America/New_York|New York (EST/EDT)">New York</option>
             <option value="America/Los_Angeles|Los Angeles (PST/PDT)">Los Angeles</option>
             <option value="Asia/Tokyo|Tokyo (JST)">Tokyo</option>
             <option value="Asia/Singapore|Singapore (SGT)">Singapore</option>
@@ -106,7 +106,7 @@
       </div>
     </div>
 
-    <!-- SEO Content & Explainer Section -->
+    <!-- SEO Section -->
     <section class="max-w-3xl mx-auto space-y-6 text-slate-700 text-sm leading-relaxed mt-12">
       <div class="border-t border-slate-200 pt-8">
         <h2 class="text-xl font-bold text-slate-900 mb-3">How to Use the Timezone Overlap Calculator</h2>
@@ -140,16 +140,34 @@
     <p>© <span id="year"></span> OverlapHour. Fast, privacy-friendly timezone tools for remote professionals.</p>
   </footer>
 
-  <!-- JavaScript Logic with LocalStorage Persistence -->
+  <!-- JavaScript Logic -->
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
 
-    // Load saved cities from localStorage, or default to Sydney & London
-    const savedCities = localStorage.getItem('overlap_cities');
-    let activeCities = savedCities ? JSON.parse(savedCities) : [
-      { id: 'syd', zone: 'Australia/Sydney', label: 'Sydney' },
-      { id: 'lon', zone: 'Europe/London', label: 'London' }
-    ];
+    // Detect visitor's local timezone automatically
+    function getInitialCities() {
+      const saved = localStorage.getItem('overlap_cities');
+      if (saved) {
+        try { return JSON.parse(saved); } catch (e) {}
+      }
+
+      // Automatically determine user's local timezone
+      const localZone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'America/New_York';
+      const cleanLabel = localZone.split('/').pop().replace(/_/g, ' ') + ' (You)';
+
+      // Pair with a standard opposite hub
+      const secondaryZone = localZone.includes('London') ? 'America/New_York' : 'Europe/London';
+      const secondaryLabel = localZone.includes('London') ? 'New York' : 'London';
+
+      const initial = [
+        { id: 'local', zone: localZone, label: cleanLabel },
+        { id: 'partner', zone: secondaryZone, label: secondaryLabel }
+      ];
+      localStorage.setItem('overlap_cities', JSON.stringify(initial));
+      return initial;
+    }
+
+    let activeCities = getInitialCities();
 
     function saveCities() {
       localStorage.setItem('overlap_cities', JSON.stringify(activeCities));
