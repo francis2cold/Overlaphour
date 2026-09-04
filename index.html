@@ -143,10 +143,16 @@
     document.getElementById('year').textContent = new Date().getFullYear();
 
     // Default cities
-    let activeCities = [
+    let // Load saved cities from localStorage, or fall back to Sydney + London
+    const savedCities = localStorage.getItem('overlap_cities');
+    let activeCities = savedCities ? JSON.parse(savedCities) : [
       { id: 'syd', zone: 'Australia/Sydney', label: 'Sydney' },
       { id: 'lon', zone: 'Europe/London', label: 'London' }
     ];
+
+    function saveCities() {
+      localStorage.setItem('overlap_cities', JSON.stringify(activeCities));
+    }
 
     const cityGridContainer = document.getElementById('cityGridContainer');
     const citySelect = document.getElementById('citySelect');
@@ -283,6 +289,7 @@
 
     window.removeCity = function(index) {
       activeCities.splice(index, 1);
+      saveCities();
       renderGrids();
     };
 
@@ -290,6 +297,7 @@
       const [zone, label] = citySelect.value.split('|');
       if (activeCities.some(c => c.zone === zone)) return;
       activeCities.push({ id: Date.now().toString(), zone, label });
+     saveCities();
       renderGrids();
     });
 
