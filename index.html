@@ -6,13 +6,13 @@
   <title>Timezone Overlap Finder | Remote Team Working Hours Planner</title>
   <meta name="description" content="Easily find overlapping work hours across multiple timezones. Perfect for remote teams, freelancers, and distributed companies planning meetings." />
   
-  <!-- Open Graph Meta Tags -->
   <meta property="og:title" content="OverlapHour | Fast Timezone Overlap Finder" />
   <meta property="og:description" content="Find the best meeting windows across global remote teams in seconds." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://www.overlaphour.com/" />
   <meta name="twitter:card" content="summary_large_image" />
 
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%234f46e5'/><path d='M25 50a25 25 0 1 0 50 0 25 25 0 1 0-50 0' fill='none' stroke='white' stroke-width='6'/><polyline points='50,28 50,50 64,50' fill='none' stroke='%2334d399' stroke-width='6' stroke-linecap='round'/><circle cx='50' cy='50' r='3' fill='white'/></svg>">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -37,7 +37,6 @@
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans min-h-screen flex flex-col justify-between transition-colors duration-200">
 
-  <!-- Header -->
   <header class="border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 transition-colors duration-200">
     <div class="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
       <div class="flex items-center space-x-2">
@@ -53,10 +52,8 @@
     </div>
   </header>
 
-  <!-- Main Tool Container -->
   <main class="max-w-5xl mx-auto px-4 py-8 w-full flex-grow">
     
-    <!-- Opt-in Banner -->
     <div id="permissionBanner" class="hidden mb-6 p-4 rounded-xl border border-indigo-200 dark:border-indigo-900 bg-indigo-50/70 dark:bg-indigo-950/40 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
       <div>
         <h3 class="text-sm font-bold text-indigo-950 dark:text-indigo-200">Set Your Local Timezone?</h3>
@@ -79,9 +76,7 @@
       </p>
     </div>
 
-    <!-- Interactive Card -->
     <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 p-5 sm:p-6 mb-8 transition-colors duration-200">
-      <!-- Controls -->
       <div class="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-slate-100 dark:border-slate-800">
         <div class="flex items-center space-x-2">
           <label for="citySelect" class="text-sm font-medium text-slate-700 dark:text-slate-300">Add City / Zone:</label>
@@ -118,10 +113,8 @@
         </div>
       </div>
 
-      <!-- Overlap Visualizer Grid -->
       <div id="cityGridContainer" class="mt-6 space-y-5"></div>
 
-      <!-- Overlap Summary Box -->
       <div id="overlapSummary" class="mt-8 p-4 bg-indigo-50 dark:bg-indigo-950/50 border border-indigo-100 dark:border-indigo-900 rounded-xl text-indigo-950 dark:text-indigo-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <span class="font-bold text-sm block">Recommended Golden Meeting Window:</span>
@@ -133,7 +126,6 @@
       </div>
     </div>
 
-    <!-- Explainer & SEO Content -->
     <section class="max-w-3xl mx-auto space-y-6 text-slate-700 dark:text-slate-400 text-sm leading-relaxed mt-12">
       <div class="border-t border-slate-200 dark:border-slate-800 pt-8">
         <h2 class="text-xl font-bold text-slate-900 dark:text-white mb-3">How to Use the Timezone Overlap Calculator</h2>
@@ -162,16 +154,14 @@
     </section>
   </main>
 
-  <!-- Footer -->
   <footer class="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 py-6 mt-12 text-center text-xs text-slate-500 dark:text-slate-400 transition-colors duration-200">
     <p>© <span id="year"></span> OverlapHour. Fast, privacy-friendly timezone tools for remote professionals.</p>
   </footer>
 
-  <!-- JavaScript Logic -->
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
 
-    // Theme Management (Dark / Light Mode)
+    // Theme Management
     const themeToggleBtn = document.getElementById('themeToggle');
     const storedTheme = localStorage.getItem('theme');
     const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
