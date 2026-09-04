@@ -98,7 +98,7 @@
       <div id="overlapSummary" class="mt-8 p-4 bg-indigo-50 border border-indigo-100 rounded-xl text-indigo-950 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <span class="font-bold text-sm block">Recommended Golden Meeting Window:</span>
-          <span id="overlapText" class="text-sm text-indigo-800">Calculating best overlap...</span>
+          <span id="overlapText" class="text-sm text-indigo-800">Add a second timezone to calculate overlap.</span>
         </div>
         <button id="copySummaryBtn" class="self-start sm:self-center text-xs font-semibold bg-white border border-indigo-200 hover:bg-indigo-100/50 text-indigo-700 px-3 py-2 rounded-lg transition-colors">
           📋 Copy Details
@@ -144,24 +144,22 @@
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
 
-    // Detect visitor's local timezone automatically
+    // Only load the user's single local timezone on initial load
     function getInitialCities() {
       const saved = localStorage.getItem('overlap_cities');
       if (saved) {
-        try { return JSON.parse(saved); } catch (e) {}
+        try { 
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        } catch (e) {}
       }
 
-      // Automatically determine user's local timezone
+      // Detect visitor's local timezone automatically
       const localZone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'America/New_York';
-      const cleanLabel = localZone.split('/').pop().replace(/_/g, ' ') + ' (You)';
-
-      // Pair with a standard opposite hub
-      const secondaryZone = localZone.includes('London') ? 'America/New_York' : 'Europe/London';
-      const secondaryLabel = localZone.includes('London') ? 'New York' : 'London';
+      const cleanLabel = localZone.split('/').pop().replace(/_/g, ' ') + ' (Your Local Time)';
 
       const initial = [
-        { id: 'local', zone: localZone, label: cleanLabel },
-        { id: 'partner', zone: secondaryZone, label: secondaryLabel }
+        { id: 'local', zone: localZone, label: cleanLabel }
       ];
       localStorage.setItem('overlap_cities', JSON.stringify(initial));
       return initial;
@@ -221,6 +219,17 @@
         cityGridContainer.appendChild(row);
       });
 
+      // If only 1 city is present, show a friendly banner to prompt adding a second timezone
+      if (activeCities.length === 1) {
+        const promptCard = document.createElement('div');
+        promptCard.className = 'border-2 border-dashed border-slate-200 rounded-xl p-6 text-center bg-white';
+        promptCard.innerHTML = `
+          <p class="text-sm font-medium text-slate-700 mb-2">Want to find overlapping hours with someone else?</p>
+          <p class="text-xs text-slate-500 mb-3">Select another city from the dropdown above to calculate the common meeting window.</p>
+        `;
+        cityGridContainer.appendChild(promptCard);
+      }
+
       calculateOverlap();
     }
 
@@ -258,7 +267,7 @@
 
     function calculateOverlap() {
       if (activeCities.length < 2) {
-        overlapText.textContent = "Add at least two cities to calculate overlap.";
+        overlapText.textContent = "Add at least one more city above to find overlapping working hours.";
         return;
       }
 
